@@ -20,25 +20,35 @@ public class LevelController : MonoBehaviour
     }
     List<Level> availableLevels = new List<Level>();
     public int currentLevel = 0;
-    bool secondDimension = true;
+    bool secondDimension = false;
 
-    [SerializeField] private GameObject player1;
-    [SerializeField] private GameObject player2;
+    //Okkio: Getting the Red and Blue player automatically on awake().
+    public GameObject bluePlayer;
+    public GameObject redPlayer;
     [SerializeField] private GameObject map;
     [SerializeField] private GameObject background;
     [SerializeField] private CinemachineVirtualCamera cam;
     private float switchCoolDown = 0;
 
+    // Colors
+    private bool switchingColors = false;
+    private Color currentMapColor;
+    private Color currentBackgroundColor;
+
+    private Color blueMap = new Color (10f/255f,17f/255f,40f/255f);
+    private Color blueBackground = new Color(16f/255f,90f/255f,124f/255f);
+
+    private Color redBackground = new Color(255f/255f,214f/255f,228f/255f);
+    private Color redMap = new Color (72.0f/255.0f,35.0f/255.0f,60.0f/255.0f);
+
     void Start()
-    {
+    {   
+        GetPlayers();
         GetLevels();
+        // Okkio: Sets the default level state which is always blue's world.
+        DefaultLevelState();
     }
-
-    void Awake() {
-        UpdateCurrentDimension();
-    }
-
-    // Update is called once per frame
+    
     void Update()
     {
         HandleChangingDimensions();
@@ -48,15 +58,28 @@ public class LevelController : MonoBehaviour
     {
         // cool down for the swap 
         switchCoolDown -= Time.deltaTime; 
-        if (!Input.GetKey(KeyCode.LeftShift) || switchCoolDown > 0)
+        // Stops the lerping from running after it is finished.
+        if(switchingColors)
+        {
+            LerpMapColors();
+        }
+        // Okkio: Shouldn't this be in the PlayerController? also GetKeyDown fixes a bug of holding shift.
+        if (!Input.GetKeyDown(KeyCode.LeftShift) || switchCoolDown > 0)
             return;
         
         UpdateCurrentDimension();
-        
-        // add cool down
-        switchCoolDown = 0.5f;
-    }
 
+        // add cool down
+        // Okkio: Made the cool down 1s to match the animation
+        switchCoolDown = 1f;
+    }
+    void GetPlayers()
+    {
+        Debug.Log("getting players");
+        bluePlayer = GameObject.Find("Blue");
+        redPlayer = GameObject.Find("Red");
+
+    }
     void GetLevels()
     {
         int sceneCount = SceneManager.sceneCountInBuildSettings;
@@ -68,36 +91,69 @@ public class LevelController : MonoBehaviour
         }
 
     }
+    
+    void DefaultLevelState()
+    {
+        // Enable Blue
+        bluePlayer.GetComponent<PlayerController>().suppersed = false;
+        bluePlayer.GetComponent<Renderer>().enabled = true;
+
+        cam.Follow = bluePlayer.GetComponent<Transform>();
+        map.GetComponent<Tilemap>().color = blueMap;
+        background.GetComponent<Tilemap>().color = blueBackground;
+        
+        // Suppress Red.
+        redPlayer.SetActive(false);
+      }
+
     void ChangeLevel(int newLevelIndex)
     {
         SceneManager.LoadScene(newLevelIndex);
         currentLevel = newLevelIndex;
     }
+
     public int GetCurrentDimension()
     {
         return secondDimension ? 1 : 0;
     }
+
     public void UpdateCurrentDimension()
     {
-        
+        // Okkio: Changed the previous supression code to SetActive()
         // switch the current dimension
         secondDimension = !secondDimension;
         
-        GameObject currentPlayer = secondDimension ? player2 : player1;
-        GameObject otherPlayer = secondDimension ? player1 : player2;
-        
+        GameObject currentPlayer = secondDimension ? redPlayer : bluePlayer;
+        GameObject otherPlayer = secondDimension ? bluePlayer : redPlayer;
+
         // set the cam to follow the current player
         cam.Follow = currentPlayer.GetComponent<Transform>();
         
         // setup the current player
-        currentPlayer.GetComponent<PlayerController>().suppersed = false;
-        currentPlayer.GetComponent<Renderer>().enabled = true;
-        map.GetComponent<Tilemap>().color = secondDimension ? Color.blue : Color.magenta;
-        background.GetComponent<Tilemap>().color = secondDimension ? Color.gray : Color.yellow;
+        currentPlayer.SetActive(true);
+        currentMapColor = secondDimension ? redMap : blueMap;
+        currentBackgroundColor = secondDimension ? redBackground : blueBackground;
+        switchingColors = true;
         
         // suppress the other player
-        otherPlayer.GetComponent<PlayerController>().suppersed = true;
-        otherPlayer.GetComponent<Renderer>().enabled = false;
+        otherPlayer.SetActive(false);
+
+        StartCoroutine(Delay(1f));
+    }
+
+    //  Okkio: Lerping the colors.
+    void LerpMapColors()
+    {
+        map.GetComponent<Tilemap>().color = Color.Lerp(map.GetComponent<Tilemap>().color , currentMapColor,0.01f);
+        background.GetComponent<Tilemap>().color = Color.Lerp(background.GetComponent<Tilemap>().color, currentBackgroundColor ,0.01f);
+        
+    }
+    // Okkio: Delay to stop the lerp function from running after it finishes.
+     IEnumerator Delay(float time)
+    {
+        yield return new WaitForSeconds(time);
+        switchingColors = false;
+        
     }
     
 }

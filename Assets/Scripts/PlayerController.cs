@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
+        groundLayer = LayerMask.GetMask("ground");
     }
 
     private void HandleMovement()
@@ -78,6 +79,15 @@ public class PlayerController : MonoBehaviour
                 groundedRecently = groundedRememberTime;
                 didDoubleJumped = false;
             }
+    }
+
+    // Okkio: Shift between players (Dimensional Shift)
+    private void DimensionalShift()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            Debug.Log("Pressing Shift");
+        }
     }
 
     private void Update()
