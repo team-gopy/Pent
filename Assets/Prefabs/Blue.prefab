@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 4473632481247579288}
   - component: {fileID: 4473632481247579289}
   m_Layer: 0
-  m_Name: Player
+  m_Name: Blue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,7 +106,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66e3bbb6f61386d4dab1468131afac98, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.4, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -175,15 +175,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20ae11f8606a4aa4a82c40edd67f1c0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundCheck: {fileID: 4473632481112334300}
+  suppersed: 0
+  groundCheck: {fileID: 0}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 64
-  groundedRememberTime: 0.12
-  jumpForce: 15.6
+    m_Bits: 0
+  groundedRememberTime: 0.25
+  jumpForce: 15
   didDoubleJumped: 0
   doubleJumpEnabled: 0
   movementMultiplier: 0.069
   horizontalDampingWhenStopping: 0.5
-  horizontalDampingWhenTurning: 0.413
-  horizontalDampingBasic: 0.339
+  horizontalDampingWhenTurning: 0.05
+  horizontalDampingBasic: 0.05
