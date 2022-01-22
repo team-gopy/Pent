@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+
+    public bool suppersed = false;
+    
     private const float GROUNDED_RADIUS = .2f; // radius of a circle to check if the ground is within it 
     
     private bool grounded;
@@ -16,7 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool doubleJumpEnabled = false;
 
 
-    [Range(0, 1)] [SerializeField] private float movementMultiplier = 0.5f;
+    [Range(0, 0.5f)] [SerializeField] private float movementMultiplier = 0.069f;
     [Range(0, 1)] [SerializeField] private float horizontalDampingWhenStopping = 0.5f;
     [Range(0, 1)] [SerializeField] private float horizontalDampingWhenTurning = .05f;
     [Range(0, 1)] [SerializeField] private float horizontalDampingBasic = .05f;
@@ -43,8 +46,10 @@ public class PlayerController : MonoBehaviour
             horizontalVelocity *= Mathf.Pow(1f - horizontalDampingWhenTurning, Time.deltaTime * 10f);
         else
             horizontalVelocity *= Mathf.Pow(1f - horizontalDampingBasic, Time.deltaTime * 10f);
-
+        
+        // setting the new vector as the velocity
         rigidbody2D.velocity = new Vector2(horizontalVelocity, rigidbody2D.velocity.y);
+        
         if (Input.GetKey(KeyCode.Space) && groundedRecently > 0)
         {
             rigidbody2D.velocity = Vector2.up * jumpForce;
@@ -61,7 +66,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        var wasGrounded = grounded;
+        if(suppersed) return;
+        
         grounded = false;
 
         var colliders = Physics2D.OverlapCircleAll(groundCheck.position, GROUNDED_RADIUS, groundLayer);
@@ -76,8 +82,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        groundedRecently -= Time.deltaTime;
+        if(suppersed) return;
         
+        groundedRecently -= Time.deltaTime;
         HandleMovement();
     }
 }

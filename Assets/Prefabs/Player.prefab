@@ -183,7 +183,7 @@ MonoBehaviour:
   jumpForce: 15.6
   didDoubleJumped: 0
   doubleJumpEnabled: 0
-  movementMultiplier: 0.306
+  movementMultiplier: 0.069
   horizontalDampingWhenStopping: 0.5
   horizontalDampingWhenTurning: 0.413
   horizontalDampingBasic: 0.339
