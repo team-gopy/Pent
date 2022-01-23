@@ -26,6 +26,8 @@ public class PlayerController : MonoBehaviour
     
     private Rigidbody2D rigidbody2D;
 
+    private int keyCount;
+
 
     private void Awake()
     {
@@ -81,13 +83,9 @@ public class PlayerController : MonoBehaviour
             }
     }
 
-    // Okkio: Shift between players (Dimensional Shift)
-    private void DimensionalShift()
+    public void CollectKey()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            Debug.Log("Pressing Shift");
-        }
+        keyCount++;
     }
 
     private void Update()

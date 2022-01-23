@@ -8,6 +8,8 @@ public class PressurePadController : MonoBehaviour
     public AudioSource source;
     public AudioClip clip;
     public bool leverState = false;
+
+    [SerializeField] private List<DimensionalGates> connectedGates;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -38,6 +40,9 @@ public class PressurePadController : MonoBehaviour
     
     public void OnPressurePadActivated()
     {
-
+        foreach(DimensionalGates gate in connectedGates)
+        {
+            gate.FlipGateColor();
+        }
     }
 }

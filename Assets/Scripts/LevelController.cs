@@ -148,7 +148,7 @@ public class LevelController : MonoBehaviour
             gate.UpdateGateCollision(currentDimension);
             gate.UpdateColors(currentDimension);
         }
-
+        StopAllCoroutines();
         StartCoroutine(Delay(1f));
     }
 

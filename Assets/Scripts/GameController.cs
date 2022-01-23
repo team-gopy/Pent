@@ -16,11 +16,15 @@ public class GameController : MonoBehaviour
         }
         levelController = GetComponent<LevelController>();
     }
+    public int GetCurrentDimension()
+    {
+        return levelController.GetCurrentDimension();
+    }
     // Start is called before the first frame update
     void Start()
     {
     }
-
+    
     // Update is called once per frame
     void Update()
     {

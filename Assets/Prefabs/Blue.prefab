@@ -181,7 +181,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   groundedRememberTime: 0.25
-  jumpForce: 17
+  jumpForce: 25
   didDoubleJumped: 0
   doubleJumpEnabled: 0
   movementMultiplier: 0.069
