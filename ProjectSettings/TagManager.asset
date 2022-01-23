@@ -6,6 +6,9 @@ TagManager:
   tags:
   - DimensionalGate
   - Key
+  - spikes
+  - checkpoint
+  - dimensional_pad
   layers:
   - Default
   - TransparentFX

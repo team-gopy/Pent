@@ -1,9 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class KeyController : MonoBehaviour
 {
+    [SerializeField] private GameObject keyLight;
+    [Range(0, 1)] [SerializeField] private float lightIntensity = 0.15f;
+    
     public AudioSource source;
     public AudioClip clip;
 
@@ -26,6 +30,7 @@ public class KeyController : MonoBehaviour
             source.PlayOneShot(clip);
             GetComponent<Renderer>().enabled = false;
             GetComponent<Collider2D>().enabled = false;
+            keyLight.GetComponent<Light2D>().intensity = 0;
             collected = true;
 
         }
@@ -38,23 +43,25 @@ public class KeyController : MonoBehaviour
         // Store the starting position & rotation of the object
         posOffset = transform.position;
         UpdateKeys(0);
-         
     }
      
     public void UpdateKeys(int dimension)
     {
-        if(collected){return;}
+        if(collected) return;
+        
         if(dimension == 0)
         {
             if(blueKey)
             {
                 GetComponent<Renderer>().enabled = true;
                 GetComponent<Collider2D>().enabled = true;
+                keyLight.GetComponent<Light2D>().intensity = lightIntensity;
             }
             else
             {
                 GetComponent<Renderer>().enabled = false;
                 GetComponent<Collider2D>().enabled = false;
+                keyLight.GetComponent<Light2D>().intensity = 0;
             }
         }
         else
@@ -63,11 +70,13 @@ public class KeyController : MonoBehaviour
             {
                 GetComponent<Renderer>().enabled = false;
                 GetComponent<Collider2D>().enabled = false;
+                keyLight.GetComponent<Light2D>().intensity = 0;
             }
             else
             {
                 GetComponent<Renderer>().enabled = true;
                 GetComponent<Collider2D>().enabled = true;
+                keyLight.GetComponent<Light2D>().intensity = lightIntensity;
             }
         }
     }

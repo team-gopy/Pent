@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
-using UnityEngine.WSA;
 
 public class LevelController : MonoBehaviour
 {
@@ -18,18 +19,23 @@ public class LevelController : MonoBehaviour
             this.levelIndex = levelIndex;
         }
     }
+    
     List<Level> availableLevels = new List<Level>();
     public int currentLevel = 0;
     bool secondDimension = false;
+    private float dimensionalSwapWaitTime = 2f;
+    private float dimensionalSwapCoolDown = 2f;
 
     List<DimensionalGates> gatesInLevel = new List<DimensionalGates>();
     List<KeyController> keysInLevel = new List<KeyController>();
+    
     //Okkio: Getting the Red and Blue player automatically on awake().
     public GameObject bluePlayer;
     public GameObject redPlayer;
     [SerializeField] private GameObject map;
     [SerializeField] private GameObject background;
     [SerializeField] private CinemachineVirtualCamera cam;
+    [SerializeField] private Light2D globalLight;
     private float switchCoolDown = 0;
 
     // Colors
@@ -42,6 +48,13 @@ public class LevelController : MonoBehaviour
 
     private Color redMap = new Color (72.0f/255.0f,35.0f/255.0f,60.0f/255.0f);
     private Color redBackground = new Color(255f/255f,214f/255f,228f/255f);
+    
+    private delegate void TodoFunc();
+
+    // this will be shaking status and current shake direction
+    // will shake left when it even and otherwise too
+    // 0 will be no shake state
+    private int shaking;
 
     void Start()
     {   
@@ -57,6 +70,7 @@ public class LevelController : MonoBehaviour
     void Update()
     {
         HandleChangingDimensions();
+        HandleDimensionalSwap();
     }
 
     void HandleChangingDimensions()
@@ -84,6 +98,7 @@ public class LevelController : MonoBehaviour
         bluePlayer = GameObject.Find("Blue");
         redPlayer = GameObject.Find("Red");
     }
+    
     void GetLevels()
     {
         int sceneCount = SceneManager.sceneCountInBuildSettings;
@@ -95,6 +110,7 @@ public class LevelController : MonoBehaviour
         }
 
     }
+    
     void GetAllGates()
     {
         foreach(GameObject obj in GameObject.FindGameObjectsWithTag("DimensionalGate"))
@@ -102,6 +118,7 @@ public class LevelController : MonoBehaviour
             gatesInLevel.Add(obj.GetComponent<DimensionalGates>());
         }
     }
+    
     void GetAllKeys()
     {
         foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Key"))
@@ -109,6 +126,7 @@ public class LevelController : MonoBehaviour
             keysInLevel.Add(obj.GetComponent<KeyController>());
         }
     }
+    
     void DefaultLevelState()
     {
         // Enable Blue
@@ -121,7 +139,7 @@ public class LevelController : MonoBehaviour
         
         // Suppress Red.
         redPlayer.SetActive(false);
-      }
+    }
 
     void ChangeLevel(int newLevelIndex)
     {
@@ -153,7 +171,9 @@ public class LevelController : MonoBehaviour
         switchingColors = true;
         
         // suppress the other player
-        otherPlayer.SetActive(false);
+        bool tmpToSaveDimensionalPadState = otherPlayer.GetComponent<PlayerController>().isOnSwapPad;
+        otherPlayer.SetActive(false); 
+        otherPlayer.GetComponent<PlayerController>().isOnSwapPad = tmpToSaveDimensionalPadState;
         
         // Okkio: Update dimensional gate collision.
         int currentDimension = GetCurrentDimension();
@@ -167,7 +187,7 @@ public class LevelController : MonoBehaviour
             key.UpdateKeys(currentDimension);
         }
         StopAllCoroutines();
-        StartCoroutine(Delay(1f));
+        StartCoroutine(Delay(1f, () => switchingColors = false ));
     }
 
     //  Okkio: Lerping the colors.
@@ -177,12 +197,67 @@ public class LevelController : MonoBehaviour
         background.GetComponent<Tilemap>().color = Color.Lerp(background.GetComponent<Tilemap>().color, currentBackgroundColor ,0.01f);
         
     }
+    
     // Okkio: Delay to stop the lerp function from running after it finishes.
-     IEnumerator Delay(float time)
+    // geeko: Delay fucntion will take a function to call after the delay
+    IEnumerator Delay(float time, TodoFunc todo)
     {
         yield return new WaitForSeconds(time);
-        switchingColors = false;
-        
+        todo();
     }
-    
+
+    public void FlashEffect(float amount)
+    {
+        globalLight.intensity += amount;
+        StartCoroutine(Delay(0.1f, () => globalLight.intensity = 1f));
+    }
+
+    public void ShakeEffect(float time)
+    {
+        cam.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 1;
+        cam.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 1;
+
+        StartCoroutine(Delay(time, () =>
+        {
+            print("dl");
+            cam.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0;
+            cam.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 0;
+        }));
+    }
+
+    private void HandleDimensionalSwap()
+    {
+        dimensionalSwapCoolDown -= Time.deltaTime;
+        
+        if(dimensionalSwapCoolDown > 0) return;
+        
+        bool bluePlayerOnSwapPad = bluePlayer.GetComponent<PlayerController>().isOnSwapPad;
+        bool redPlayerOnSwapPad = redPlayer.GetComponent<PlayerController>().isOnSwapPad;
+
+        if (!bluePlayerOnSwapPad || !redPlayerOnSwapPad)
+        {
+            // print("should swap");
+            dimensionalSwapWaitTime = 2f;
+            return;
+        }
+
+        if (dimensionalSwapWaitTime <= 0)
+        {
+            ShakeEffect(0.5f);
+            StartCoroutine(Delay(0.5f, () =>
+            {
+                GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
+                FlashEffect(0.5f);
+                (bluePlayer.transform.position, redPlayer.transform.position) =
+                    (redPlayer.transform.position, bluePlayer.transform.position);
+
+                
+            }));
+            dimensionalSwapWaitTime = 2f;
+                            dimensionalSwapCoolDown = 2f;
+            return;
+        }
+        
+        dimensionalSwapWaitTime -= Time.deltaTime;
+    }
 }

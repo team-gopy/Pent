@@ -10,9 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4109566692202342875}
   - component: {fileID: 7123363879324897685}
-  - component: {fileID: 1577722817}
   - component: {fileID: 856863306155391533}
-  - component: {fileID: 1577722822}
   - component: {fileID: 951209754}
   - component: {fileID: -3790866526760010767}
   m_Layer: 0
@@ -55,7 +53,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75,7 +73,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66e3bbb6f61386d4dab1468131afac98, type: 3}
   m_Color: {r: 0.14150941, g: 0.14150941, b: 0.14150941, a: 1}
   m_FlipX: 0
@@ -87,27 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!50 &1577722817
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2819722576106749867}
-  m_BodyType: 2
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 7
 --- !u!61 &856863306155391533
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -134,32 +111,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.2503937, y: 0.024609301}
   m_EdgeRadius: 0
---- !u!61 &1577722822
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2819722576106749867}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.0003362298, y: 0.00084685907}
-  m_SpriteTilingProperty:
-    border: {x: 0.015625, y: 0.015625, z: 0.015625, w: 0.015625}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 0.25, y: 0.025}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 1
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.25474155, y: 0.027093709}
-  m_EdgeRadius: 0
 --- !u!114 &951209754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,6 +127,8 @@ MonoBehaviour:
   source: {fileID: -3790866526760010767}
   clip: {fileID: 8300000, guid: 9b946e79840821b41857c27076dbe9c5, type: 3}
   leverState: 0
+  connectedGates:
+  - {fileID: 0}
 --- !u!82 &-3790866526760010767
 AudioSource:
   m_ObjectHideFlags: 0
