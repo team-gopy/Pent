@@ -51,11 +51,6 @@ public class LevelController : MonoBehaviour
     
     private delegate void TodoFunc();
 
-    // this will be shaking status and current shake direction
-    // will shake left when it even and otherwise too
-    // 0 will be no shake state
-    private int shaking;
-
     void Start()
     {   
         GetPlayers();
