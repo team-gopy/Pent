@@ -179,12 +179,10 @@ MonoBehaviour:
   groundCheck: {fileID: 0}
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
-  groundedRememberTime: 0.25
-  jumpForce: 25
+    m_Bits: 64
+  groundedRememberTime: 0.1
+  jumpForce: 16
   didDoubleJumped: 0
-  doubleJumpEnabled: 0
-  movementMultiplier: 0.069
-  horizontalDampingWhenStopping: 0.5
-  horizontalDampingWhenTurning: 0.05
-  horizontalDampingBasic: 0.05
+  doubleJumpEnabled: 1
+  movementMultiplier: 12.09
+  inAirMovementMultiplier: 8

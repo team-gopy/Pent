@@ -19,14 +19,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool doubleJumpEnabled = false;
 
 
-    [Range(0, 0.5f)] [SerializeField] private float movementMultiplier = 0.069f;
-    [Range(0, 1)] [SerializeField] private float horizontalDampingWhenStopping = 0.5f;
-    [Range(0, 1)] [SerializeField] private float horizontalDampingWhenTurning = .05f;
-    [Range(0, 1)] [SerializeField] private float horizontalDampingBasic = .05f;
+    [Range(0, 30)] [SerializeField] private float movementMultiplier = 14;
+    [Range(0, 30)] [SerializeField] private float inAirMovementMultiplier = 9;
     
     private Rigidbody2D rigidbody2D;
 
-    private int keyCount;
+    private int keyCount = 0;
 
 
     private void Awake()
@@ -39,32 +37,26 @@ public class PlayerController : MonoBehaviour
     {
         
         // gets the x axis's velocity and add 1 * multiplier;
-        float horizontalVelocity = rigidbody2D.velocity.x;
-        horizontalVelocity += Input.GetAxisRaw("Horizontal") * movementMultiplier ;
-
-        // if left or right are not pressed that means the player wanna stop
-        if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) < 0.01f)
-            horizontalVelocity *= Mathf.Pow(1f - horizontalDampingWhenStopping, Time.deltaTime * 10f);
-        else if (Mathf.Sign(Input.GetAxisRaw("Horizontal")) != Mathf.Sign(horizontalVelocity))
-            horizontalVelocity *= Mathf.Pow(1f - horizontalDampingWhenTurning, Time.deltaTime * 10f);
-        else
-            horizontalVelocity *= Mathf.Pow(1f - horizontalDampingBasic, Time.deltaTime * 10f);
-        
-        // setting the new vector as the velocity
+        float horizontalVelocity = grounded ? Input.GetAxisRaw("Horizontal") * movementMultiplier : Input.GetAxisRaw("Horizontal") * inAirMovementMultiplier;
         rigidbody2D.velocity = new Vector2(horizontalVelocity, rigidbody2D.velocity.y);
-        
+
         if (Input.GetKey(KeyCode.Space) && groundedRecently > 0)
         {
-            rigidbody2D.velocity = Vector2.up * jumpForce;
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
             grounded = false;
             groundedRecently = 0;
         }
 
-        if (Input.GetKey(KeyCode.Space) && !grounded && !didDoubleJumped && doubleJumpEnabled)
+        if (Input.GetKey(KeyCode.Space) && groundedRecently <= 0 && !didDoubleJumped && doubleJumpEnabled)
         {
-            rigidbody2D.velocity = Vector2.up * jumpForce;
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
             didDoubleJumped = true;
         }
+    }
+    
+    public void CollectKey()
+    {
+        keyCount++;
     }
 
     private void FixedUpdate()
@@ -83,11 +75,6 @@ public class PlayerController : MonoBehaviour
             }
     }
 
-    public void CollectKey()
-    {
-        keyCount++;
-    }
-
     private void Update()
     {
         if(suppersed) return;
@@ -95,4 +82,5 @@ public class PlayerController : MonoBehaviour
         groundedRecently -= Time.deltaTime;
         HandleMovement();
     }
+    
 }
