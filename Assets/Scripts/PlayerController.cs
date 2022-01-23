@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    public bool suppersed = false;
+    public bool completedLevel = false;
 
     private const float GROUNDED_RADIUS = .2f; // radius of a circle to check if the ground is within it 
 
@@ -22,6 +22,8 @@ public class PlayerController : MonoBehaviour
     [Range(0, 30)] [SerializeField] private float movementMultiplier = 14;
     [Range(0, 30)] [SerializeField] private float inAirMovementMultiplier = 9;
 
+
+
     private Rigidbody2D rigidbody2D;
 
     private int keyCount = 0;
@@ -30,9 +32,13 @@ public class PlayerController : MonoBehaviour
     
     public bool isOnSwapPad = false;
 
+    public AudioSource source;
+    public AudioClip jumpSound;
+    public AudioClip jump2Sound;
 
     private void Awake()
     {
+        source = GetComponent<AudioSource>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         checkpoint = transform.position;
         groundLayer = LayerMask.GetMask("ground");
@@ -47,23 +53,43 @@ public class PlayerController : MonoBehaviour
             : Input.GetAxisRaw("Horizontal") * inAirMovementMultiplier;
         rigidbody2D.velocity = new Vector2(horizontalVelocity, rigidbody2D.velocity.y);
 
-        if (Input.GetKey(KeyCode.Space) && groundedRecently > 0)
+        if (Input.GetKeyDown(KeyCode.Space) && groundedRecently <= 0 && !didDoubleJumped && doubleJumpEnabled)
         {
+            source.PlayOneShot(jump2Sound);
+            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
+            didDoubleJumped = true;
+        }
+        if (Input.GetKeyDown(KeyCode.Space) && groundedRecently > 0)
+        {
+            source.PlayOneShot(jumpSound);
             rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
             grounded = false;
             groundedRecently = 0;
         }
 
-        if (Input.GetKey(KeyCode.Space) && groundedRecently <= 0 && !didDoubleJumped && doubleJumpEnabled)
-        {
-            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
-            didDoubleJumped = true;
-        }
     }
 
+    public void PlayerCompletedLevel()
+    {
+        UseKey();
+        completedLevel = true;
+        Color fadedColor = GetComponent<SpriteRenderer>().color;
+        fadedColor.a = 0.3f;
+        GetComponent<SpriteRenderer>().color  = fadedColor;
+    }
     public void CollectKey()
     {
         keyCount++;
+    }
+
+    void UseKey()
+    {
+        keyCount--;
+    }
+
+    public int GetKeyCount()
+    {
+        return keyCount;
     }
 
     private void Die()
@@ -75,7 +101,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (suppersed) return;
+        if (completedLevel) return;
 
         grounded = false;
 
@@ -91,7 +117,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (suppersed) return;
+        if (completedLevel) return;
 
         groundedRecently -= Time.deltaTime;
         HandleMovement();

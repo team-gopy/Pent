@@ -132,11 +132,11 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0
-  m_GravityScale: 3.02
+  m_GravityScale: 6
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &4473632481247579288
 BoxCollider2D:
@@ -176,17 +176,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20ae11f8606a4aa4a82c40edd67f1c0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  suppersed: 0
+  completedLevel: 0
   groundCheck: {fileID: 4473632481112334300}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
   groundedRememberTime: 0.1
-  jumpForce: 16
+  jumpForce: 22.5
   didDoubleJumped: 0
-  doubleJumpEnabled: 1
-  movementMultiplier: 12.09
-  inAirMovementMultiplier: 8
+  doubleJumpEnabled: 0
+  movementMultiplier: 16
+  inAirMovementMultiplier: 10
+  isOnSwapPad: 0
+  source: {fileID: 0}
+  jumpSound: {fileID: 8300000, guid: a02394fda522b0846bf8dc7233d44efc, type: 3}
+  jump2Sound: {fileID: 8300000, guid: abf7457d39c9cf949af077faa7d895cb, type: 3}
 --- !u!82 &1379745225
 AudioSource:
   m_ObjectHideFlags: 0
@@ -197,15 +201,15 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 18333afbcd245064bab6876e3e7d32c4, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
+  m_Volume: 0.5
+  m_Pitch: 2.42
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 1
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500

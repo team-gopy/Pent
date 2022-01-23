@@ -34,6 +34,7 @@ public class LevelController : MonoBehaviour
     public GameObject redPlayer;
     [SerializeField] private GameObject map;
     [SerializeField] private GameObject background;
+    [SerializeField] private GameObject doorBackground;
     [SerializeField] private CinemachineVirtualCamera cam;
     [SerializeField] private Light2D globalLight;
     private float switchCoolDown = 0;
@@ -44,15 +45,27 @@ public class LevelController : MonoBehaviour
     private Color currentBackgroundColor;
 
     private Color blueMap = new Color (10f/255f,17f/255f,40f/255f);
-    private Color blueBackground = new Color(16f/255f,90f/255f,124f/255f);
+    private Color blueBackground = new Color(24f/255f,57f/255f,84f/255f);
 
     private Color redMap = new Color (72.0f/255.0f,35.0f/255.0f,60.0f/255.0f);
     private Color redBackground = new Color(255f/255f,214f/255f,228f/255f);
+    Tilemap mapTM;
+    Tilemap backgroundTM;
+    Tilemap doorBackgroundTM;
     
     private delegate void TodoFunc();
+    private IEnumerator  lerpCoroutine;
+
+    public AudioSource source;
+    public AudioClip shiftSoundRed;
+    public AudioClip shiftSoundBlue;
 
     void Start()
     {   
+        source = GetComponent<AudioSource>();
+        mapTM = map.GetComponent<Tilemap>();
+        backgroundTM = background.GetComponent<Tilemap>();
+        doorBackgroundTM = doorBackground.GetComponent<Tilemap>();
         GetPlayers();
         GetLevels();
         // Okkio: Sets the default level state which is always blue's world.
@@ -77,10 +90,8 @@ public class LevelController : MonoBehaviour
         {
             LerpMapColors();
         }
-        // Okkio: Shouldn't this be in the PlayerController? also GetKeyDown fixes a bug of holding shift.
         if (!Input.GetKeyDown(KeyCode.LeftShift) || switchCoolDown > 0)
             return;
-        
         UpdateCurrentDimension();
 
         // add cool down
@@ -121,16 +132,21 @@ public class LevelController : MonoBehaviour
             keysInLevel.Add(obj.GetComponent<KeyController>());
         }
     }
-    
+
+    public int GetLevelKeyCount()
+    {
+        return keysInLevel.Count;
+    }
     void DefaultLevelState()
     {
         // Enable Blue
-        bluePlayer.GetComponent<PlayerController>().suppersed = false;
+        bluePlayer.GetComponent<PlayerController>().completedLevel = false;
         bluePlayer.GetComponent<Renderer>().enabled = true;
 
         cam.Follow = bluePlayer.GetComponent<Transform>();
         map.GetComponent<Tilemap>().color = blueMap;
         background.GetComponent<Tilemap>().color = blueBackground;
+        doorBackground.GetComponent<Tilemap>().color = blueBackground;
         
         // Suppress Red.
         redPlayer.SetActive(false);
@@ -152,6 +168,16 @@ public class LevelController : MonoBehaviour
         // Okkio: Changed the previous supression code to SetActive()
         // switch the current dimension
         secondDimension = !secondDimension;
+
+        if(secondDimension)
+        {
+            source.PlayOneShot(shiftSoundRed);
+        }
+        else
+        {
+            source.PlayOneShot(shiftSoundBlue);
+        } 
+            
         
         GameObject currentPlayer = secondDimension ? redPlayer : bluePlayer;
         GameObject otherPlayer = secondDimension ? bluePlayer : redPlayer;
@@ -182,15 +208,21 @@ public class LevelController : MonoBehaviour
             key.UpdateKeys(currentDimension);
         }
         StopAllCoroutines();
-        StartCoroutine(Delay(1f, () => switchingColors = false ));
     }
 
     //  Okkio: Lerping the colors.
     void LerpMapColors()
     {
-        map.GetComponent<Tilemap>().color = Color.Lerp(map.GetComponent<Tilemap>().color , currentMapColor,0.01f);
-        background.GetComponent<Tilemap>().color = Color.Lerp(background.GetComponent<Tilemap>().color, currentBackgroundColor ,0.01f);
-        
+        mapTM.color = Color.Lerp(map.GetComponent<Tilemap>().color , currentMapColor,0.01f);
+        backgroundTM.color = Color.Lerp(background.GetComponent<Tilemap>().color, currentBackgroundColor ,0.01f);
+        doorBackgroundTM.color = Color.Lerp(doorBackground.GetComponent<Tilemap>().color, currentBackgroundColor ,0.01f);
+
+        if(mapTM.color == currentMapColor && backgroundTM.color == currentBackgroundColor && doorBackgroundTM.color == currentBackgroundColor) 
+        {
+            switchingColors = false;
+        }
+
+
     }
     
     // Okkio: Delay to stop the lerp function from running after it finishes.
@@ -214,7 +246,6 @@ public class LevelController : MonoBehaviour
 
         StartCoroutine(Delay(time, () =>
         {
-            print("dl");
             cam.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0;
             cam.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 0;
         }));
@@ -254,5 +285,16 @@ public class LevelController : MonoBehaviour
         }
         
         dimensionalSwapWaitTime -= Time.deltaTime;
+    }
+
+    public void LoadNextLevel()
+    {
+        int nextScene = currentLevel++;
+        if(nextScene < availableLevels.Count)
+            SceneManager.LoadScene(currentLevel++);
+    }
+    public void StopLevelCoroutines()
+    {
+        StopAllCoroutines();
     }
 }

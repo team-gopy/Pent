@@ -42,8 +42,7 @@ public class DimensionalGates : MonoBehaviour
     }
     public void UpdateColors(int dimension)
     {
-        StopAllCoroutines();
-        switchingColors = false;
+        GameController.Instance.levelController.StopLevelCoroutines();
         if(dimension == 0)
         {
             if(blueGate)
@@ -67,8 +66,6 @@ public class DimensionalGates : MonoBehaviour
             }
         }
         switchingColors = true;
-        StartCoroutine(Delay(1f));
-
     }
     public void UpdateGateCollision(int dimension)
     {
@@ -100,14 +97,12 @@ public class DimensionalGates : MonoBehaviour
     void LerpMapColors()
     {
         gateTilemap.color = Color.Lerp(gateTilemap.color,currentMapColor,0.01f);
+        if(gateTilemap.color == currentMapColor)
+        {
+           switchingColors = false;
+        }
     }
 
-    IEnumerator Delay(float time)
-    {
-        yield return new WaitForSeconds(time);
-        switchingColors = false;
-        
-    }
     // Update is called once per frame
     void Update()
     {
