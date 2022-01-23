@@ -23,7 +23,7 @@ public class LevelController : MonoBehaviour
     bool secondDimension = false;
 
     List<DimensionalGates> gatesInLevel = new List<DimensionalGates>();
-
+    List<KeyController> keysInLevel = new List<KeyController>();
     //Okkio: Getting the Red and Blue player automatically on awake().
     public GameObject bluePlayer;
     public GameObject redPlayer;
@@ -51,6 +51,7 @@ public class LevelController : MonoBehaviour
         DefaultLevelState();
         // Okkio: Get all the dimensional gates in the level.
         GetAllGates();
+        GetAllKeys();
     }
     
     void Update()
@@ -94,7 +95,20 @@ public class LevelController : MonoBehaviour
         }
 
     }
-    
+    void GetAllGates()
+    {
+        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("DimensionalGate"))
+        {
+            gatesInLevel.Add(obj.GetComponent<DimensionalGates>());
+        }
+    }
+    void GetAllKeys()
+    {
+        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Key"))
+        {
+            keysInLevel.Add(obj.GetComponent<KeyController>());
+        }
+    }
     void DefaultLevelState()
     {
         // Enable Blue
@@ -148,6 +162,10 @@ public class LevelController : MonoBehaviour
             gate.UpdateGateCollision(currentDimension);
             gate.UpdateColors(currentDimension);
         }
+        foreach(KeyController key in keysInLevel)
+        {
+            key.UpdateKeys(currentDimension);
+        }
         StopAllCoroutines();
         StartCoroutine(Delay(1f));
     }
@@ -165,14 +183,6 @@ public class LevelController : MonoBehaviour
         yield return new WaitForSeconds(time);
         switchingColors = false;
         
-    }
-
-    void GetAllGates()
-    {
-        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("DimensionalGate"))
-        {
-            gatesInLevel.Add(obj.GetComponent<DimensionalGates>());
-        }
     }
     
 }

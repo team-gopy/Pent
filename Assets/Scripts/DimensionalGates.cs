@@ -42,6 +42,8 @@ public class DimensionalGates : MonoBehaviour
     }
     public void UpdateColors(int dimension)
     {
+        StopAllCoroutines();
+        switchingColors = false;
         if(dimension == 0)
         {
             if(blueGate)
@@ -65,7 +67,6 @@ public class DimensionalGates : MonoBehaviour
             }
         }
         switchingColors = true;
-        StopAllCoroutines();
         StartCoroutine(Delay(1f));
 
     }
