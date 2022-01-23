@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 4473632481247579289}
   m_Layer: 0
   m_Name: Blue
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   groundedRememberTime: 0.25
-  jumpForce: 15
+  jumpForce: 17
   didDoubleJumped: 0
   doubleJumpEnabled: 0
   movementMultiplier: 0.069

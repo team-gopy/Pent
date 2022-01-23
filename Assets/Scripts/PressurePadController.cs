@@ -21,7 +21,7 @@ public class PressurePadController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.name == "Player" && !pressed)
+        if(other.tag == "Player" && !pressed)
         {
             gameObject.transform.position -= new Vector3 (0.0f,0.1f,0.0f);
             source.PlayOneShot(clip);

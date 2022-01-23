@@ -22,6 +22,8 @@ public class LevelController : MonoBehaviour
     public int currentLevel = 0;
     bool secondDimension = false;
 
+    List<DimensionalGates> gatesInLevel = new List<DimensionalGates>();
+
     //Okkio: Getting the Red and Blue player automatically on awake().
     public GameObject bluePlayer;
     public GameObject redPlayer;
@@ -38,8 +40,8 @@ public class LevelController : MonoBehaviour
     private Color blueMap = new Color (10f/255f,17f/255f,40f/255f);
     private Color blueBackground = new Color(16f/255f,90f/255f,124f/255f);
 
-    private Color redBackground = new Color(255f/255f,214f/255f,228f/255f);
     private Color redMap = new Color (72.0f/255.0f,35.0f/255.0f,60.0f/255.0f);
+    private Color redBackground = new Color(255f/255f,214f/255f,228f/255f);
 
     void Start()
     {   
@@ -47,6 +49,8 @@ public class LevelController : MonoBehaviour
         GetLevels();
         // Okkio: Sets the default level state which is always blue's world.
         DefaultLevelState();
+        // Okkio: Get all the dimensional gates in the level.
+        GetAllGates();
     }
     
     void Update()
@@ -73,12 +77,11 @@ public class LevelController : MonoBehaviour
         // Okkio: Made the cool down 1s to match the animation
         switchCoolDown = 1f;
     }
+    
     void GetPlayers()
     {
-        Debug.Log("getting players");
         bluePlayer = GameObject.Find("Blue");
         redPlayer = GameObject.Find("Red");
-
     }
     void GetLevels()
     {
@@ -137,6 +140,14 @@ public class LevelController : MonoBehaviour
         
         // suppress the other player
         otherPlayer.SetActive(false);
+        
+        // Okkio: Update dimensional gate collision.
+        int currentDimension = GetCurrentDimension();
+        foreach(DimensionalGates gate in gatesInLevel)
+        {
+            gate.UpdateGateCollision(currentDimension);
+            gate.UpdateColors(currentDimension);
+        }
 
         StartCoroutine(Delay(1f));
     }
@@ -154,6 +165,14 @@ public class LevelController : MonoBehaviour
         yield return new WaitForSeconds(time);
         switchingColors = false;
         
+    }
+
+    void GetAllGates()
+    {
+        foreach(GameObject obj in GameObject.FindGameObjectsWithTag("DimensionalGate"))
+        {
+            gatesInLevel.Add(obj.GetComponent<DimensionalGates>());
+        }
     }
     
 }
