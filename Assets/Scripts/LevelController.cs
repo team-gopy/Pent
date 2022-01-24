@@ -291,7 +291,10 @@ public class LevelController : MonoBehaviour
     {
         int nextScene = currentLevel++;
         if(nextScene < availableLevels.Count)
-            SceneManager.LoadScene(currentLevel++);
+        {
+            currentLevel++;
+            SceneManager.LoadScene(currentLevel);
+        }
     }
     public void StopLevelCoroutines()
     {

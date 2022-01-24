@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -36,12 +37,16 @@ public class PlayerController : MonoBehaviour
     public AudioClip jumpSound;
     public AudioClip jump2Sound;
 
+    private Image tutImage;
+
     private void Awake()
     {
         source = GetComponent<AudioSource>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         checkpoint = transform.position;
         groundLayer = LayerMask.GetMask("ground");
+        
+        tutImage = GameObject.FindGameObjectWithTag("TutorialImage").GetComponent<Image>();
     }
 
     private void HandleMovement()
@@ -135,6 +140,23 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "checkpoint")
             checkpoint = other.transform.position;
 
+        if(other.tag == "TutorialOff")
+        {
+            tutImage.GetComponent<TutorialText>().HideCurrentTutorial(other);
+            
+        }
+        if(other.tag == "TutorialOn")
+        {
+            tutImage.GetComponent<TutorialText>().LoadNextTutorial(other);
+
+        }
+        if(other.tag == "TutorialOffB")
+        {
+            if(this.name == "Blue")
+            {
+                tutImage.GetComponent<TutorialText>().HideCurrentTutorial(other);
+            }
+        }
     }
 
     public void OnTriggerExit2D(Collider2D other)

@@ -30,7 +30,7 @@ public class ExitDoorController : MonoBehaviour
                 playersPassed++;
                 if(playersPassed == 2)
                 {
-                   StartCoroutine(Delay(2f));
+                   StartCoroutine(Delay(1.5f));
                 }
             }
         }

@@ -9,6 +9,11 @@ TagManager:
   - spikes
   - checkpoint
   - dimensional_pad
+  - TutorialImage
+  - TutorialOff
+  - TutorialOn
+  - TutorialOffB
+  - TutorialOffR
   layers:
   - Default
   - TransparentFX

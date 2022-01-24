@@ -140,7 +140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4473632481247579293, guid: b91e1e685c1f17a42b4f95c74e59a2f6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -67.46
+      value: -64.21
       objectReference: {fileID: 0}
     - target: {fileID: 4473632481247579293, guid: b91e1e685c1f17a42b4f95c74e59a2f6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -907,7 +907,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 277954521}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -57.749477, y: -2.6109962, z: -10}
+  m_LocalPosition: {x: -54.674984, y: -2.6109962, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -18110,8 +18110,12 @@ MonoBehaviour:
   redPlayer: {fileID: 1175683847}
   map: {fileID: 54866123}
   background: {fileID: 268755877}
+  doorBackground: {fileID: 0}
   cam: {fileID: 1141159005}
   globalLight: {fileID: 429029282}
+  source: {fileID: 0}
+  shiftSoundRed: {fileID: 0}
+  shiftSoundBlue: {fileID: 0}
 --- !u!114 &1351580820
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18253,7 +18257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5855390953509475580, guid: 536372434a4aa014b82ccd81d4ab5e2f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -64.53346
+      value: -62.98
       objectReference: {fileID: 0}
     - target: {fileID: 5855390953509475580, guid: 536372434a4aa014b82ccd81d4ab5e2f, type: 3}
       propertyPath: m_LocalPosition.y
@@ -18448,7 +18452,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3916421255289250752, guid: 4a1594e60978f4c4fbaefe3724ae92a3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -71.82
+      value: -64.68
       objectReference: {fileID: 0}
     - target: {fileID: 3916421255289250752, guid: 4a1594e60978f4c4fbaefe3724ae92a3, type: 3}
       propertyPath: m_LocalPosition.y
