@@ -73,6 +73,9 @@ public class LevelController : MonoBehaviour
         // Okkio: Get all the dimensional gates in the level.
         GetAllGates();
         GetAllKeys();
+
+        currentLevel = SceneManager.GetActiveScene().buildIndex;
+        // Debug.Log(currentLevel);
     }
     
     void Update()
@@ -103,6 +106,12 @@ public class LevelController : MonoBehaviour
     {
         bluePlayer = GameObject.Find("Blue");
         redPlayer = GameObject.Find("Red");
+        if(currentLevel == 2)
+        {
+            bluePlayer.GetComponent<PlayerController>().doubleJumpEnabled = true;
+            redPlayer.GetComponent<PlayerController>().doubleJumpEnabled = true;
+
+        }
     }
     
     void GetLevels()
@@ -289,11 +298,11 @@ public class LevelController : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        int nextScene = currentLevel++;
+        int nextScene = ++currentLevel;
         if(nextScene < availableLevels.Count)
         {
-            currentLevel++;
-            SceneManager.LoadScene(currentLevel);
+            Debug.Log(nextScene);
+            SceneManager.LoadScene(nextScene);
         }
     }
     public void StopLevelCoroutines()

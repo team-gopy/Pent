@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private bool didDoubleJumped = false;
-    [SerializeField] private bool doubleJumpEnabled = false;
+    public bool doubleJumpEnabled = false;
 
 
     [Range(0, 30)] [SerializeField] private float movementMultiplier = 14;

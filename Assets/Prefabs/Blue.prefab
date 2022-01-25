@@ -181,7 +181,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  groundedRememberTime: 0.1
+  groundedRememberTime: 0.15
   jumpForce: 22.5
   didDoubleJumped: 0
   doubleJumpEnabled: 0
