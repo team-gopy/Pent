@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
@@ -18,6 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 5f;
     [SerializeField] private bool didDoubleJumped = false;
     public bool doubleJumpEnabled = false;
+    bool jumped = false;
 
 
     [Range(0, 30)] [SerializeField] private float movementMultiplier = 14;
@@ -36,8 +39,10 @@ public class PlayerController : MonoBehaviour
     public AudioSource source;
     public AudioClip jumpSound;
     public AudioClip jump2Sound;
+    public AudioClip deathSound;
 
     private Image tutImage;
+
 
     private void Awake()
     {
@@ -58,18 +63,22 @@ public class PlayerController : MonoBehaviour
             : Input.GetAxisRaw("Horizontal") * inAirMovementMultiplier;
         rigidbody2D.velocity = new Vector2(horizontalVelocity, rigidbody2D.velocity.y);
 
-        if (Input.GetKeyDown(KeyCode.Space) && groundedRecently <= 0 && !didDoubleJumped && doubleJumpEnabled)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            source.PlayOneShot(jump2Sound);
-            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
-            didDoubleJumped = true;
-        }
-        if (Input.GetKeyDown(KeyCode.Space) && groundedRecently > 0)
-        {
-            source.PlayOneShot(jumpSound);
-            rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
-            grounded = false;
-            groundedRecently = 0;
+            if (groundedRecently <= 0 && !didDoubleJumped && jumped && doubleJumpEnabled) 
+            {   
+                source.PlayOneShot(jump2Sound);
+                rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
+                didDoubleJumped = true;
+            }
+            else if(groundedRecently > 0)
+            {
+                source.PlayOneShot(jumpSound);
+                rigidbody2D.velocity = new Vector2(rigidbody2D.velocity.x, jumpForce);
+                grounded = false;
+                groundedRecently = 0;
+                StartCoroutine(jumpedDelay(0.1f));
+            }
         }
 
     }
@@ -79,6 +88,7 @@ public class PlayerController : MonoBehaviour
         UseKey();
         completedLevel = true;
         Color fadedColor = GetComponent<SpriteRenderer>().color;
+        GetComponent<Light2D>().enabled = false;
         fadedColor.a = 0.3f;
         GetComponent<SpriteRenderer>().color  = fadedColor;
     }
@@ -99,8 +109,9 @@ public class PlayerController : MonoBehaviour
 
     private void Die()
     {
-        GetComponent<AudioSource>().PlayOneShot(GetComponent<AudioSource>().clip);
-        GameController.Instance.levelController.FlashEffect(-0.4f);
+        GetComponent<AudioSource>().PlayOneShot(deathSound);
+        
+        GameController.Instance.levelController.FlashEffect(-0.3f);
         transform.position = checkpoint;
     }
 
@@ -109,12 +120,12 @@ public class PlayerController : MonoBehaviour
         if (completedLevel) return;
 
         grounded = false;
-
         var colliders = Physics2D.OverlapCircleAll(groundCheck.position, GROUNDED_RADIUS, groundLayer);
         foreach (var coll in colliders)
             if (coll.gameObject != gameObject)
             {
                 grounded = true;
+                jumped = false;
                 groundedRecently = groundedRememberTime;
                 didDoubleJumped = false;
             }
@@ -166,5 +177,11 @@ public class PlayerController : MonoBehaviour
             isOnSwapPad = false;
         }
     }
+     IEnumerator jumpedDelay(float time)
+    {
+        yield return new WaitForSeconds(time);
+        jumped = true;
+    }
+
 
 }

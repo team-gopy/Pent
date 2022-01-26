@@ -14,6 +14,7 @@ TagManager:
   - TutorialOn
   - TutorialOffB
   - TutorialOffR
+  - LevelText
   layers:
   - Default
   - TransparentFX

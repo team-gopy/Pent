@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
-
+using UnityEngine.UI;
 public class LevelController : MonoBehaviour
 {
     struct Level
@@ -41,6 +41,7 @@ public class LevelController : MonoBehaviour
 
     // Colors
     private bool switchingColors = false;
+    private float lerpControl = 0f;
     private Color currentMapColor;
     private Color currentBackgroundColor;
 
@@ -60,6 +61,8 @@ public class LevelController : MonoBehaviour
     public AudioClip shiftSoundRed;
     public AudioClip shiftSoundBlue;
 
+    private Text levelText;
+
     void Start()
     {   
         source = GetComponent<AudioSource>();
@@ -75,7 +78,30 @@ public class LevelController : MonoBehaviour
         GetAllKeys();
 
         currentLevel = SceneManager.GetActiveScene().buildIndex;
+
+        levelText = GameObject.FindGameObjectWithTag("LevelText").GetComponent<Text>();
+        if(currentLevel == 3)
+        {
+            levelText.text = "Level " + 10;
+            levelText.color = Color.red;
+        }
+        else
+        {
+            levelText.text = "Level " + currentLevel;
+        }
+        
+        levelText.CrossFadeAlpha(0f,0f,false);
+        levelText.CrossFadeAlpha(1f,2f,false);
+        StartCoroutine(levelTextFadeDelay(3f));
         // Debug.Log(currentLevel);
+    }
+
+    
+    IEnumerator levelTextFadeDelay(float time)
+    {
+        yield return new WaitForSeconds(time);
+        levelText.CrossFadeAlpha(0f,1f,false);
+
     }
     
     void Update()
@@ -199,6 +225,7 @@ public class LevelController : MonoBehaviour
         currentMapColor = secondDimension ? redMap : blueMap;
         currentBackgroundColor = secondDimension ? redBackground : blueBackground;
         switchingColors = true;
+        lerpControl = 0;
         
         // suppress the other player
         bool tmpToSaveDimensionalPadState = otherPlayer.GetComponent<PlayerController>().isOnSwapPad;
@@ -216,16 +243,20 @@ public class LevelController : MonoBehaviour
         {
             key.UpdateKeys(currentDimension);
         }
-        StopAllCoroutines();
+        // StopAllCoroutines();
     }
 
     //  Okkio: Lerping the colors.
     void LerpMapColors()
     {
-        mapTM.color = Color.Lerp(map.GetComponent<Tilemap>().color , currentMapColor,0.01f);
-        backgroundTM.color = Color.Lerp(background.GetComponent<Tilemap>().color, currentBackgroundColor ,0.01f);
-        doorBackgroundTM.color = Color.Lerp(doorBackground.GetComponent<Tilemap>().color, currentBackgroundColor ,0.01f);
+        mapTM.color = Color.Lerp(map.GetComponent<Tilemap>().color , currentMapColor,lerpControl);
+        backgroundTM.color = Color.Lerp(background.GetComponent<Tilemap>().color, currentBackgroundColor ,lerpControl);
+        doorBackgroundTM.color = Color.Lerp(doorBackground.GetComponent<Tilemap>().color, currentBackgroundColor ,lerpControl);
 
+        if (lerpControl < 1)
+        {
+            lerpControl += Time.deltaTime/8f;
+        }
         if(mapTM.color == currentMapColor && backgroundTM.color == currentBackgroundColor && doorBackgroundTM.color == currentBackgroundColor) 
         {
             switchingColors = false;
@@ -301,12 +332,11 @@ public class LevelController : MonoBehaviour
         int nextScene = ++currentLevel;
         if(nextScene < availableLevels.Count)
         {
-            Debug.Log(nextScene);
             SceneManager.LoadScene(nextScene);
         }
     }
     public void StopLevelCoroutines()
     {
-        StopAllCoroutines();
+        // StopAllCoroutines();
     }
 }
