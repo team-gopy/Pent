@@ -62,6 +62,9 @@ public class LevelController : MonoBehaviour
     public AudioClip shiftSoundBlue;
 
     private Text levelText;
+    private Image friendBehind;
+    private Image endScreen;
+
 
     void Start()
     {   
@@ -69,6 +72,7 @@ public class LevelController : MonoBehaviour
         mapTM = map.GetComponent<Tilemap>();
         backgroundTM = background.GetComponent<Tilemap>();
         doorBackgroundTM = doorBackground.GetComponent<Tilemap>();
+
         GetPlayers();
         GetLevels();
         // Okkio: Sets the default level state which is always blue's world.
@@ -79,17 +83,21 @@ public class LevelController : MonoBehaviour
 
         currentLevel = SceneManager.GetActiveScene().buildIndex;
 
+        friendBehind = GameObject.Find("FriendBehind").GetComponent<Image>();
         levelText = GameObject.FindGameObjectWithTag("LevelText").GetComponent<Text>();
         if(currentLevel == 3)
         {
             levelText.text = "Level " + 10;
             levelText.color = Color.red;
+            endScreen = GameObject.Find("EndScreen").GetComponent<Image>(); 
+            endScreen.CrossFadeAlpha(0f,0f,false);
         }
         else
         {
             levelText.text = "Level " + currentLevel;
         }
-        
+
+        friendBehind.CrossFadeAlpha(0,0f,false);
         levelText.CrossFadeAlpha(0f,0f,false);
         levelText.CrossFadeAlpha(1f,2f,false);
         StartCoroutine(levelTextFadeDelay(3f));
@@ -108,6 +116,7 @@ public class LevelController : MonoBehaviour
     {
         HandleChangingDimensions();
         HandleDimensionalSwap();
+        HandleResetLevel();
     }
 
     void HandleChangingDimensions()
@@ -326,17 +335,44 @@ public class LevelController : MonoBehaviour
         
         dimensionalSwapWaitTime -= Time.deltaTime;
     }
-
+    public void OpenDoor()
+    {
+        doorBackground.GetComponent<BoxCollider2D>().enabled = false;
+    }
     public void LoadNextLevel()
     {
+        
         int nextScene = ++currentLevel;
         if(nextScene < availableLevels.Count)
         {
             SceneManager.LoadScene(nextScene);
         }
+        else
+        {
+            FlashEffect(3f);
+            ShowEndScreen();
+        }
     }
-    public void StopLevelCoroutines()
+     void HandleResetLevel()
     {
-        // StopAllCoroutines();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            FlashEffect(-0.3f);
+            SceneManager.LoadScene(currentLevel);
+        }
+    }
+
+    public void ShowFriendBehind()
+    {
+        friendBehind.CrossFadeAlpha(1,1f,false);
+    }
+
+    public void HideFriendBehind()
+    {
+        friendBehind.CrossFadeAlpha(0,1f,false);
+    }
+    void ShowEndScreen()
+    {
+        endScreen.CrossFadeAlpha(1,1f,false);
     }
 }

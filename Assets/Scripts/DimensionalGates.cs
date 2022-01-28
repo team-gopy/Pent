@@ -43,7 +43,6 @@ public class DimensionalGates : MonoBehaviour
     }
     public void UpdateColors(int dimension)
     {
-        GameController.Instance.levelController.StopLevelCoroutines();
         if(dimension == 0)
         {
             if(blueGate)

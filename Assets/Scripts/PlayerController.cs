@@ -85,7 +85,6 @@ public class PlayerController : MonoBehaviour
 
     public void PlayerCompletedLevel()
     {
-        UseKey();
         completedLevel = true;
         Color fadedColor = GetComponent<SpriteRenderer>().color;
         GetComponent<Light2D>().enabled = false;
@@ -97,7 +96,7 @@ public class PlayerController : MonoBehaviour
         keyCount++;
     }
 
-    void UseKey()
+    public void UseKey()
     {
         keyCount--;
     }
@@ -141,32 +140,37 @@ public class PlayerController : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "spikes")  Die();
-
-        if (other.tag == "dimensional_pad")
+        switch(other.tag)
         {
-            isOnSwapPad = true;
-        }
-        
-        if (other.tag == "checkpoint")
-            checkpoint = other.transform.position;
-
-        if(other.tag == "TutorialOff")
-        {
-            tutImage.GetComponent<TutorialText>().HideCurrentTutorial(other);
-            
-        }
-        if(other.tag == "TutorialOn")
-        {
-            tutImage.GetComponent<TutorialText>().LoadNextTutorial(other);
-
-        }
-        if(other.tag == "TutorialOffB")
-        {
-            if(this.name == "Blue")
-            {
+            case "spikes":
+                Die();
+                break;
+            case "dimensional_pad":
+                isOnSwapPad = true;
+                break;
+            case "checkpoint":
+                checkpoint = other.transform.position;
+                break;
+            case "TutorialOff":
                 tutImage.GetComponent<TutorialText>().HideCurrentTutorial(other);
-            }
+                break;
+            case "TutorialOn":
+                tutImage.GetComponent<TutorialText>().LoadNextTutorial(other);
+                break;
+            case "TutorialOffB":
+                if(this.name == "Blue")
+                {
+                    tutImage.GetComponent<TutorialText>().HideCurrentTutorial(other);
+                }
+                break;
+            case "TutorialOffR":
+                if(this.name == "Red")
+                {
+                    tutImage.GetComponent<TutorialText>().HideCurrentTutorial(other);
+                }
+                break;
+            default:
+                break;
         }
     }
 

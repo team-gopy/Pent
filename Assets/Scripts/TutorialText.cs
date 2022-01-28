@@ -28,6 +28,7 @@ public class TutorialText : MonoBehaviour
     }
     public void LoadNextTutorial(Collider2D other)
     {
+
         if(!imageDisplayed && tutorialCount < images.Count)
         {
             tutImage.sprite = images[tutorialCount];
@@ -35,6 +36,10 @@ public class TutorialText : MonoBehaviour
             tutImage.CrossFadeAlpha(1f,1.5f,false);
             imageDisplayed = true;
             other.GetComponent<BoxCollider2D>().enabled = false;
+            if(tutorialCount == images.Count-1)
+            {
+                StartCoroutine(Delay(8f));
+            }
             tutorialCount++;
         }
     }
@@ -46,5 +51,11 @@ public class TutorialText : MonoBehaviour
             imageDisplayed = false;
             other.GetComponent<BoxCollider2D>().enabled = false;
         }
+    }
+    IEnumerator Delay(float time)
+    {
+        yield return new WaitForSeconds(time);
+        tutImage.CrossFadeAlpha(0f,1f,false);
+        imageDisplayed = false;
     }
 }
